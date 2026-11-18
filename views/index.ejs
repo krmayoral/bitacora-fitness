@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ REGISTRO DEPORTIVO</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+    .navbar {
+      background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+      border-bottom: 2px solid #facc15;
+    }
+    .navbar-brand {
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #facc15 !important;
+      font-size: 1.4rem;
+    }
+    .nav-pills .nav-link {
+      color: #cbd5e1;
+      font-weight: 600;
+      border-radius: 8px;
+      margin-left: 8px;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #facc15;
+      color: #0f172a;
+    }
+    .panel-card {
+      background-color: #131b2e;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .form-control, .form-select {
+      background-color: #0b0f19;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      border-radius: 10px;
+    }
+    .form-control:focus, .form-select:focus {
+      background-color: #0b0f19;
+      color: #fff;
+      border-color: #facc15;
+      box-shadow: 0 0 0 0.2rem rgba(250, 204, 21, 0.25);
+    }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary-sport {
+      background-color: #facc15;
+      color: #0f172a;
+      font-weight: 800;
+      border: none;
+      border-radius: 10px;
+      transition: transform 0.15s ease;
+    }
+    .btn-primary-sport:hover {
+      background-color: #eab308;
+      color: #0f172a;
+      transform: translateY(-2px);
+    }
+    .chip-btn {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      font-size: 0.78rem;
+      border-radius: 20px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip-btn:hover {
+      background-color: #facc15;
+      color: #0f172a;
+      border-color: #facc15;
+    }
+    .workout-card {
+      background-color: #131b2e;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .workout-card:hover {
+      transform: translateY(-3px);
+      border-color: #facc15;
+    }
+    .workout-img {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      max-height: 260px;
+      object-fit: cover;
+    }
+    .badge-disciplina {
+      background-color: rgba(250, 204, 21, 0.15);
+      color: #facc15;
+      border: 1px solid #facc15;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+    .pagination .page-link {
+      background-color: #131b2e;
+      border-color: #334155;
+      color: #f8fafc;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #facc15;
+      border-color: #facc15;
+      color: #0f172a;
+      font-weight: 800;
+    }
+    footer {
+      background-color: #070a12;
+      border-top: 1px solid #1e293b;
+    }
+  </style>
+</head>
+<body>
+  <%
+    const safeFiltros = (typeof filtros !== 'undefined' && filtros) ? filtros : { disciplina: 'Todas', mes: '' };
+    const safeEntrenamientos = (typeof entrenamientos !== 'undefined' && entrenamientos) ? entrenamientos : [];
+    const safeCurrentPage = (typeof currentPage !== 'undefined') ? currentPage : 1;
+    const safeTotalPages = (typeof totalPages !== 'undefined') ? totalPages : 1;
+    const safeTotalRecords = (typeof totalRecords !== 'undefined') ? totalRecords : 0;
+    const safeMensaje = (typeof mensajeContacto !== 'undefined') ? mensajeContacto : false;
+  %>
+
+  <!-- BARRA DE NAVEGACIÓN CON PESTAÑAS -->
+  <nav class="navbar navbar-expand-lg sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand" href="/">⚡ REGISTRO DEPORTIVO</a>
+      <button class="navbar-toggler bg-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="nav nav-pills mt-2 mt-lg-0" id="pills-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-bitacora" data-bs-toggle="pill" data-bs-target="#vista-bitacora" type="button" role="tab">Mi Bitácora</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-recursos" data-bs-toggle="pill" data-bs-target="#vista-recursos" type="button" role="tab">Técnica y Video</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <div class="tab-content" id="pills-tabContent">
+      
+      <!-- VISTA 1: BITÁCORA Y FORMULARIO -->
+      <div class="tab-pane fade show active" id="vista-bitacora" role="tabpanel">
+        
+        <!-- FILTROS -->
+        <div class="panel-card p-3 p-md-4 mb-4">
+          <form action="/" method="GET" class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+              <label class="form-label">Filtrar por Disciplina</label>
+              <select name="disciplina" class="form-select">
+                <option value="Todas" <%= safeFiltros.disciplina === 'Todas' ? 'selected' : '' %>>Todas las disciplinas</option>
+                <option value="Running" <%= safeFiltros.disciplina === 'Running' ? 'selected' : '' %>>🏃 Running</option>
+                <option value="Calistenia" <%= safeFiltros.disciplina === 'Calistenia' ? 'selected' : '' %>>💪 Calistenia</option>
+                <option value="Gimnasio" <%= safeFiltros.disciplina === 'Gimnasio' ? 'selected' : '' %>>🏋️ Gimnasio / Pesas</option>
+                <option value="Ciclismo" <%= safeFiltros.disciplina === 'Ciclismo' ? 'selected' : '' %>>🚴 Ciclismo</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Buscar por Mes o Año</label>
+              <input type="text" name="mes" class="form-control" placeholder="Ej. Noviembre 2026" value="<%= safeFiltros.mes %>">
+            </div>
+            <div class="col-12 col-md-4 d-flex gap-2">
+              <button type="submit" class="btn btn-primary-sport w-100 py-2">Aplicar Filtros</button>
+              <a href="/" class="btn btn-outline-light w-100 py-2 rounded-3">Limpiar</a>
+            </div>
+          </form>
+        </div>
+
+        <div class="row g-4">
+          <!-- FORMULARIO NUEVA SESIÓN (FOTO OPCIONAL) -->
+          <div class="col-12 col-lg-4">
+            <div class="panel-card p-4">
+              <h4 class="fw-bold mb-3 text-warning">+ Nueva Sesión</h4>
+              <form action="/agregar" method="POST" enctype="multipart/form-data">
+                
+                <div class="mb-3">
+                  <label class="form-label">Título de la Sesión</label>
+                  <input type="text" name="titulo" class="form-control" placeholder="Ej. Fondo matutino / Rutina de barra" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Disciplina</label>
+                  <select name="disciplina" id="selectDisciplina" class="form-select" onchange="actualizarSugerencias()">
+                    <option value="Running">🏃 Running</option>
+                    <option value="Calistenia">💪 Calistenia</option>
+                    <option value="Gimnasio">🏋️ Gimnasio / Pesas</option>
+                    <option value="Ciclismo">🚴 Ciclismo</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Fecha</label>
+                  <input type="date" name="fecha" id="inputFecha" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" id="labelMedida">Distancia / Ritmo</label>
+                  <input type="text" name="duracion" id="inputMedida" class="form-control mb-2" placeholder="Ej. 5 km en 24 min" required>
+                  <div id="chipsContainer" class="d-flex flex-wrap gap-1"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Foto de la Sesión (Opcional)</label>
+                  <input type="file" name="imagen_archivo" class="form-control" accept="image/*">
+                  <small class="text-secondary" style="font-size: 0.75rem;">Puedes dejarlo en blanco si no deseas subir foto.</small>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label">Notas y Sensaciones</label>
+                  <textarea name="notas" rows="3" class="form-control" placeholder="¿Cómo te sentiste? Terreno, clima, energía..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary-sport w-100 py-2 fs-6">Guardar Entrenamiento</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- HISTORIAL DE TARJETAS -->
+          <div class="col-12 col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="fw-bold mb-0">Historial de Entrenamientos</h4>
+              <span class="badge bg-secondary rounded-pill px-3 py-2"><%= safeTotalRecords %> registros totales</span>
+            </div>
+
+            <% if (safeEntrenamientos.length === 0) { %>
+              <div class="panel-card p-5 text-center text-secondary">
+                <h5>No hay entrenamientos registrados todavía</h5>
+                <p class="mb-0">Llena el formulario de la izquierda para agregar tu primera sesión.</p>
+              </div>
+            <% } else { %>
+              <div class="d-flex flex-column gap-3">
+                <% safeEntrenamientos.forEach(item => { 
+                  let defaultImg = 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=600&q=80';
+                  if (item.disciplina === 'Calistenia') {
+                    defaultImg = 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=600&q=80';
+                  } else if (item.disciplina === 'Gimnasio') {
+                    defaultImg = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80';
+                  } else if (item.disciplina === 'Ciclismo') {
+                    defaultImg = 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=600&q=80';
+                  }
+
+                  const imgFinal = (item.imagen_url && item.imagen_url.trim() !== '') ? item.imagen_url : defaultImg;
+                  const fechaObj = new Date(item.fecha);
+                  const fechaISO = !isNaN(fechaObj) ? fechaObj.toISOString().split('T')[0] : '';
+                %>
+                  <div class="workout-card">
+                    <div class="row g-0">
+                      <div class="col-12 col-md-4">
+                        <img src="<%= imgFinal %>" alt="<%= item.disciplina %>" class="workout-img" onerror="this.src='<%= defaultImg %>'">
+                      </div>
+                      <div class="col-12 col-md-8 p-3 p-md-4 d-flex flex-column justify-content-between">
+                        <div>
+                          <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <span class="badge-disciplina"><%= item.disciplina %></span>
+                            <small class="text-secondary fw-semibold"><%= fechaISO %> • <%= item.mes %></small>
+                          </div>
+                          <h5 class="fw-bold text-white mb-1"><%= item.titulo %></h5>
+                          <p class="text-warning fw-semibold mb-2">⏱️ <%= item.duracion %></p>
+                          <% if (item.notas) { %>
+                            <p class="text-secondary small mb-3"><%= item.notas %></p>
+                          <% } %>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2 border-top border-secondary pt-2">
+                          <button type="button" class="btn btn-sm btn-outline-warning" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalEditar<%= item.id %>">
+                            ✏️ Editar
+                          </button>
+                          <form action="/eliminar/<%= item.id %>" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este entrenamiento?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Borrar</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- MODAL EDITAR -->
+                  <div class="modal fade" id="modalEditar<%= item.id %>" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content bg-dark text-white border-secondary">
+                        <div class="modal-header border-secondary">
+                          <h5 class="modal-title text-warning fw-bold">Editar Entrenamiento</h5>
+                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form action="/editar/<%= item.id %>" method="POST" enctype="multipart/form-data">
+                          <div class="modal-body">
+                            <div class="mb-3">
+                              <label class="form-label">Título</label>
+                              <input type="text" name="titulo" class="form-control" value="<%= item.titulo %>" required>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Disciplina</label>
+                              <select name="disciplina" class="form-select">
+                                <option value="Running" <%= item.disciplina === 'Running' ? 'selected' : '' %>>Running</option>
+                                <option value="Calistenia" <%= item.disciplina === 'Calistenia' ? 'selected' : '' %>>Calistenia</option>
+                                <option value="Gimnasio" <%= item.disciplina === 'Gimnasio' ? 'selected' : '' %>>Gimnasio / Pesas</option>
+                                <option value="Ciclismo" <%= item.disciplina === 'Ciclismo' ? 'selected' : '' %>>Ciclismo</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Fecha</label>
+                              <input type="date" name="fecha" class="form-control" value="<%= fechaISO %>" required>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Distancia / Series</label>
+                              <input type="text" name="duracion" class="form-control" value="<%= item.duracion %>" required>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Cambiar Foto (Opcional)</label>
+                              <input type="file" name="imagen_archivo" class="form-control" accept="image/*">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Notas</label>
+                              <textarea name="notas" rows="3" class="form-control"><%= item.notas %></textarea>
+                            </div>
+                          </div>
+                          <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary-sport">Guardar Cambios</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+
+              <!-- PAGINACIÓN -->
+              <% if (safeTotalPages > 1) { %>
+                <nav class="mt-4">
+                  <ul class="pagination justify-content-center">
+                    <% for (let i = 1; i <= safeTotalPages; i++) { %>
+                      <li class="page-item <%= safeCurrentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="/?page=<%= i %>&disciplina=<%= safeFiltros.disciplina %>&mes=<%= safeFiltros.mes %>"><%= i %></a>
+                      </li>
+                    <% } %>
+                  </ul>
+                </nav>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 2: RECURSOS (YOUTUBE Y SPOTIFY) -->
+      <div class="tab-pane fade" id="vista-recursos" role="tabpanel">
+        <div class="row g-4 justify-content-center">
+          
+          <!-- RECURSO 1: YOUTUBE -->
+          <div class="col-12 col-lg-8">
+            <div class="panel-card p-4">
+              <h4 class="fw-bold text-warning mb-2">🎥 Técnica y Motivación de Running</h4>
+              <p class="text-secondary mb-4">Material audiovisual de referencia para mejorar postura, cadencia y resistencia en tus sesiones.</p>
+              <div class="ratio ratio-16x9 rounded-4 overflow-hidden border border-secondary">
+                <iframe src="https://www.youtube.com/embed/gF0rrpMH-Jo" title="Video de entrenamiento" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+
+          <!-- RECURSO 2: SPOTIFY (Sinergia Cognitiva) -->
+          <div class="col-12 col-lg-8">
+            <div class="panel-card p-4">
+              <h4 class="fw-bold text-warning mb-2">🎙️ Podcast: Sinergia Cognitiva (Spotify)</h4>
+              <p class="text-secondary mb-4">Episodio especial enfocado en los beneficios del ejercicio y los hábitos de running.</p>
+              <div class="rounded-4 overflow-hidden border border-secondary" style="background-color: #000;">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/06ntj3ubOoTxfCS9NXb3bQ?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BUZÓN DE METAS (PIE DE PÁGINA) -->
+  <footer id="footer-form" class="py-5 mt-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+          <div class="panel-card p-4">
+            <h5 class="fw-bold text-warning mb-2">💬 Buzón de Metas y Mejoras</h5>
+            <p class="text-secondary small mb-3">¿Tienes alguna meta nueva o comentario sobre tu progreso? Regístralo aquí.</p>
+            
+            <% if (safeMensaje) { %>
+              <div class="alert alert-success py-2 small">✅ ¡Mensaje enviado y registrado correctamente!</div>
+            <% } %>
+
+            <form action="/contacto" method="POST">
+              <div class="row g-2 mb-2">
+                <div class="col-12 col-sm-6">
+                  <input type="text" name="nombre" class="form-control form-control-sm" placeholder="Tu nombre" required>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <input type="email" name="correo" class="form-control form-control-sm" placeholder="Tu correo" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <textarea name="mensaje" rows="2" class="form-control form-control-sm" placeholder="Escribe tu meta o comentario..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary-sport btn-sm w-100 py-2">Enviar Comentario</button>
+            </form>
+          </div>
+          <p class="text-center text-secondary small mt-4 mb-0">⚡ REGISTRO DEPORTIVO • Todos los derechos reservados</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('inputFecha').valueAsDate = new Date();
+
+    const opcionesPorDisciplina = {
+      'Running': {
+        label: 'Distancia y Tiempo',
+        placeholder: 'Ej. 5 km en 25 min',
+        chips: ['2 km', '3 km', '5 km', '8 km', '10 km']
+      },
+      'Calistenia': {
+        label: 'Series y Repeticiones',
+        placeholder: 'Ej. 4 series de 12 dominadas + 15 fondos',
+        chips: ['4x10 Dominadas', '4x15 Fondos', '5x20 Flexiones', 'Full Body 45 min']
+      },
+      'Gimnasio': {
+        label: 'Series, Reps y Peso',
+        placeholder: 'Ej. 4x10 Press Banca con 60 kg',
+        chips: ['4x10 Hipertrofia', '5x5 Fuerza', '3x15 Circuito']
+      },
+      'Ciclismo': {
+        label: 'Distancia y Ruta',
+        placeholder: 'Ej. 20 km ruta urbana',
+        chips: ['15 km', '25 km', '40 km', '1 hora rodillo']
+      }
+    };
+
+    function actualizarSugerencias() {
+      const disciplina = document.getElementById('selectDisciplina').value;
+      const config = opcionesPorDisciplina[disciplina];
+      
+      document.getElementById('labelMedida').innerText = config.label;
+      document.getElementById('inputMedida').placeholder = config.placeholder;
+      
+      const container = document.getElementById('chipsContainer');
+      container.innerHTML = '';
+      config.chips.forEach(texto => {
+        const span = document.createElement('span');
+        span.className = 'chip-btn';
+        span.innerText = texto;
+        span.onclick = () => {
+          document.getElementById('inputMedida').value = texto;
+        };
+        container.appendChild(span);
+      });
+    }
+
+    actualizarSugerencias();
+
+    // Auto-elimina el mensaje verde a los 3 segundos sin necesidad de recargar
+    if (window.location.search.includes('contacto=ok')) {
+      setTimeout(() => {
+        const alerta = document.querySelector('.alert-success');
+        if (alerta) {
+          alerta.style.transition = 'opacity 0.6s ease';
+          alerta.style.opacity = '0';
+          setTimeout(() => alerta.remove(), 600);
+        }
+        window.history.replaceState({}, document.title, window.location.pathname + '#footer-form');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
